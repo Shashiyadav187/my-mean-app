@@ -1,0 +1,51 @@
+{
+  "name": "my-mean-app",
+  "description": "Mean Demo app with user managements feature",
+  "main": "",
+  "authors": [
+    "https://github.com/pmverma"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "mongodb",
+    "express",
+    "angularjs",
+    "node.js",
+    "mongoose",
+    "passport"
+  ],
+  "homepage": "https://github.com/pmverma/my-mean-app",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  "angular": "~1.5.0",
+  "angular-animate": "~1.5.0",
+  "angular-bootstrap": "~1.2.1",
+  "angular-messages": "~1.5.0",
+  "angular-mocks": "~1.5.0",
+  "angular-resource": "~1.5.0",
+  "angular-ui-router": "~0.2.18",
+  "bootstrap": "~3.3.6",
+  "ng-file-upload": "^12.1.0",
+  "ng-img-crop": "ngImgCrop#^0.3.2",
+  "owasp-password-strength-test": "~1.3.0"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.css",
+        "dist/css/bootstrap-theme.css",
+        "less/bootstrap.less"
+      ]
+    },
+    "jquery": {
+      "main": []
+    }
+  }
+}
