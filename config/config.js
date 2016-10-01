@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * Module dependencies 
+ * Module dependencies
  */
-var _ = require('loadash'),
-    chalk = require('chalk'),
-    glob = require('glob'),
-    fs = require('fs'),
-    path = require('path');
+var _ = require('lodash'),
+  chalk = require('chalk'),
+  glob = require('glob'),
+  fs = require('fs'),
+  path = require('path');
 
 /**
  * Get files by glob patterns
@@ -52,7 +52,7 @@ var getGlobbedPaths = function (globPatterns, excludes) {
 
 var validateEnvironmentVariable = function () {
   var environmentFiles = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
-  if(!environmentFiles.length) {
+  if (!environmentFiles.length) {
     if (process.env.NODE_ENV) {
       console.error(chalk.red('+ Error: No configuration file found for "' + process.env.NODE_ENV + '" environment using development instead'));
     } else {
@@ -60,17 +60,17 @@ var validateEnvironmentVariable = function () {
     }
     process.env.NODE_ENV = 'development';
   }
-  
+
   // Reset console color
   console.log(chalk.white(''));
 };
 
 /**
  * Validate config.domain is set or not
- */ 
+ */
 
-var validateDomainIsSet = function () {
-  if(!config.app.domain) {
+var validateDomainIsSet = function (config) {
+  if (!config.app.domain) {
     console.log(chalk.red('+ Important warning: config.domain is empty. It should be set to the fully qualified domain of the app.'));
   }
 };
@@ -78,18 +78,18 @@ var validateDomainIsSet = function () {
 /**
  * Validate Secure=true parameter can actually be turned on
  * because it requires certs and key files to be available
- */ 
+ */
 
-var validateSecureMode = function () {
-  
-  if(!config.secure || config.secret.ssl !== true) {
+var validateSecureMode = function (config) {
+
+  if (!config.secure || config.secret.ssl !== true) {
     return true;
   }
-  
+
   var privateKey = fs.existsSync(path.resolve(config.secure.privateKey));
   var certificate = fs.existsSync(path.resolve(config.secure.certificate));
-  
-  if(!privateKey || !certificate) {
+
+  if (!privateKey || !certificate) {
     console.log(chalk.red('+ Error: Certificate file or key file is missing, falling back to non-SSL mode'));
     console.log(chalk.red(' To create them, simply run the following from your shell: sh ./scripts/generate-ssl-certs.sh'));
     console.log();
@@ -102,12 +102,12 @@ var validateSecureMode = function () {
  */
 
 var validateSessionSecret = function (config, testing) {
-  if(process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     return true;
   }
-  
-  if (config.sessionSecret == 'my-mean-app') {
-    if(!testing) {
+
+  if (config.sessionSecret === 'my-mean-app') {
+    if (!testing) {
       console.log(chalk.red('+ WARNING: It is strongly recommended that you change sessionSecret config while running in production!'));
       console.log(chalk.red('  Please add `sessionSecret: process.env.SESSION_SECRET || \'super amazing secret\'` to '));
       console.log(chalk.red('  `config/env/production.js` or `config/env/local.js`'));
@@ -128,11 +128,10 @@ var initGlobalConfigFolders = function (config, assets) {
     server: {},
     client: {}
   };
-  
+
   // Setting globbed client paths
   config.folders.client = getGlobbedPaths(path.join(process.cwd(), 'modules/*/client/'), process.cwd().replace(new RegExp(/\\/g), '/'));
-}
-
+};
 
 /**
  *  Initialize global configuration files
@@ -143,16 +142,16 @@ var initGlobalConfigFiles = function (config, assets) {
     server: {},
     client: {}
   };
-  
+
   // Setting Globbed model files
   config.files.server.models = getGlobbedPaths(assets.server.models);
-  
+
   // Setting Globbed route files
   config.files.server.routes = getGlobbedPaths(assets.server.routes);
-  
+
   // Setting Globbed config files
   config.files.server.configs = getGlobbedPaths(assets.server.config);
-  
+
   // Setting Globbed socket files
   config.files.server.sockets = getGlobbedPaths(assets.server.sockets);
 
@@ -173,50 +172,50 @@ var initGlobalConfigFiles = function (config, assets) {
  * Initialize global configuration
  */
 var initGlobalConfig = function () {
-  //Validate NODE_ENV existence
+  // Validate NODE_ENV existence
   validateEnvironmentVariable();
-  
+
   // Get the default assets
   var defaultAssets = require(path.join(process.cwd(), 'config/assets/default'));
-  
+
   // Get the environment assets
   var environmentAssets = require(path.join(process.cwd(), 'config/assets/', process.env.NODE_ENV)) || {};
-  
-  //Merge assets
-  var assets  = _.merge(defaultAssets, environmentAssets);
-  
+
+  // Merge assets
+  var assets = _.merge(defaultAssets, environmentAssets);
+
   // Get the default config
   var defaultConfig = require(path.join(process.cwd(), 'config/env/default'));
-  
+
   // Get the environment config
-  var environmentConfig  = require(path.join(process.cwd(), 'config/env/', process.env.NODE_ENV)) || {}
-  
+  var environmentConfig = require(path.join(process.cwd(), 'config/env/', process.env.NODE_ENV)) || {};
+
   // Merge assets
   var config = _.merge(defaultConfig, environmentConfig);
-  
+
   // read package.json for my-mean-app project information
   var pkg = require(path.resolve('./package.json'));
   config.meanjs = pkg;
-  
+
   // Extend the config object with the local-NODE_ENV.js custom/local environment. This will override any settings present in the local configuration.
   config = _.merge(config, (fs.existsSync(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js')) && require(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js'))) || {});
-  
+
   // Initialize global globbed files
   initGlobalConfigFiles(config, assets);
-  
+
   // Initialize global globbed folders
   initGlobalConfigFolders(config, assets);
-  
+
   // Validate Secure SSL mode
   validateSecureMode(config);
-  
+
   // Validate session secret
   validateSessionSecret(config);
-  
+
   // Check and print a warning if config.domain is not set
   validateDomainIsSet(config);
-  
-    // Expose configuration utilities
+
+  // Expose configuration utilities
   config.utils = {
     getGlobbedPaths: getGlobbedPaths,
     validateSessionSecret: validateSessionSecret

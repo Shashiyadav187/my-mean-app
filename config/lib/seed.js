@@ -5,7 +5,7 @@ var _ = require('lodash'),
   mongoose = require('mongoose'),
   chalk = require('chalk'),
   crypto = require('crypto');
-  
+
 // global seed options object
 
 var seedOptions = {};
@@ -14,7 +14,7 @@ function saveUser (user) {
   return function () {
     return new Promise(function (resolve, reject) {
       user.save(function (err, theuser) {
-        if(err) {
+        if (err) {
           reject(new Error('Failed to add local ' + user.username));
         } else {
           resolve(theuser);
@@ -28,7 +28,7 @@ function removeUser (user) {
   return new Promise(function (resolve, reject) {
     var User = mongoose.model('User');
     User.find({ username: user.username }).remove(function (err) {
-      if(err) {
+      if (err) {
         reject(new Error(' Failed to remove local ' + user.username));
       }
       resolve();
@@ -78,11 +78,11 @@ function reportError (reject) {
 function seedTheUser(user) {
   return function (password) {
     return new Promise(function (resolve, reject) {
-      
+
       var User = mongoose.model('User');
       user.password = password;
-      
-      if(user.username === seedOptions.seedAdmin.username && process.env.NODE_ENV === 'production') {
+
+      if (user.username === seedOptions.seedAdmin.username && process.env.NODE_ENV === 'production') {
         checkUserNotExists(user)
         .then(saveUser(user))
         .then(reportSuccess(password))
@@ -109,11 +109,11 @@ function seedTheUser(user) {
 
 module.exports.start = function start(options) {
   seedOptions = _.clone(config.seedDB.options, true);
-  
-  if(_.has(options, 'logResults')) {
+
+  if (_.has(options, 'logResults')) {
     seedOptions.logResults = options.logResults;
   }
-  
+
   if (_.has(options, 'seedUser')) {
     seedOptions.seedUser = options.seedUser;
   }
@@ -126,9 +126,9 @@ module.exports.start = function start(options) {
   return new Promise(function (resolve, reject) {
     var adminAccount = new User(seedOptions.seedAdmin);
     var userAccount = new User(seedOptions.seedUser);
-    
+
     // seed only admin for production env, if it does not exist
-    if(process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       User.generateRandomPassphrase()
         .then(seedTheUser(adminAccount))
         .then(function () {

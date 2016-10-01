@@ -11,7 +11,7 @@ var config = require('../config'),
   bodyParser = require('body-parser'),
   session = require('express-session'),
   MongoStore = require('connect-mongo')(session),
-  favicon = require("serve-favicon"),
+  favicon = require('serve-favicon'),
   compress = require('compression'),
   methodOverride = require('method-override'),
   cookieParser = require('cookie-parser'),
@@ -21,8 +21,7 @@ var config = require('../config'),
   path = require('path'),
   _ = require('lodash'),
   lusca = require('lusca');
-  
-  
+
 module.exports.initLocalVariables = function (app) {
   app.locals.title = config.app.title;
   app.locals.description = config.app.description;
@@ -38,7 +37,7 @@ module.exports.initLocalVariables = function (app) {
   app.locals.favicon = config.favicon;
   app.locals.env = process.env.NODE_ENV;
   app.locals.domain = config.domain;
-  
+
   // Passing the request url to environment locals
   app.use(function (req, res, next) {
     res.locals.host = req.protocol + '://' + req.hostname;
@@ -58,16 +57,16 @@ module.exports.initMiddleware = function (app) {
     },
     level: 6
   }));
-  
+
   app.use(favicon(app.locals.favicon));
-  
+
   // Enable logger (morgan) if enabled in the configuration file
   if (_.has(config, 'log.format')) {
     app.use(morgan(logger.getLogFormat(), logger.getMorganOptions()));
   }
-  
+
   // Environment depedent middleware
-  if(process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     // Disable views cache
     app.set('view cache', false);
   } else if (process.env.NODE_ENV === 'production') {
@@ -125,7 +124,7 @@ module.exports.initSession = function (app, db) {
 module.exports.initModulesConfiguration = function (app, db) {
   config.files.server.config.forEach(function (configPath) {
     // TODO check why app,db is passed as parameter?
-    require(path.resolve(configPath))(app,db);
+    require(path.resolve(configPath))(app, db);
   });
 };
 
@@ -133,7 +132,7 @@ module.exports.initModulesConfiguration = function (app, db) {
  * Configure Helmet headers configuration
  */
 module.exports.initHelmetHeaders = function (app) {
-  
+
   var SIX_MONTHS = 15778476000;
   app.use(helmet.frameguard());
   app.use(helmet.xssFilter());
@@ -152,7 +151,7 @@ module.exports.initHelmetHeaders = function (app) {
  */
 module.exports.initModulesClientRoutes = function (app) {
   app.use('/', express.static(path.resolve('./public')));
-  
+
   config.folders.client.forEach(function (staticPath) {
     app.use(staticPath, express.static(path.resolve('./' + staticPath)));
   });
@@ -162,7 +161,7 @@ module.exports.initModulesClientRoutes = function (app) {
  * Configure modules ACL  policies
  */
 module.exports.initModulesServerPolicies = function (app) {
-  //Globbing policy files
+  // Globbing policy files
   config.files.server.policies.forEach(function (policyPath) {
     require(path.resolve(policyPath)).invokeRolesPolicies();
   });
@@ -184,11 +183,11 @@ module.exports.initModulesServerRoutes = function (app) {
  */
 module.exports.initErrorRoutes = function (app) {
   app.use(function (err, req, res, next) {
-    if(!err) {
+    if (!err) {
       return next();
     }
     console.error(err.stack);
-    
+
     res.redirect('/server-error');
   });
 };
@@ -197,36 +196,37 @@ module.exports.initErrorRoutes = function (app) {
  * Configure socket.io
  */
 module.exports.configureSocketIO = function (app, db) {
-  var server = require('./socket.io') (app,db);
-  return  server;
-}
+  var server = require('./socket.io')(app, db);
+  return server;
+};
+
 /**
  *  Initialize the Express application
  */
 module.exports.init = function (db) {
   var app = express();
-  
+
   this.initLocalVariables(app);
-  
+
   this.initViewEngine(app);
-  
+
   this.initViewEngine(app);
-  
+
   this.initHelmetHeaders(app);
-  
+
   this.initModulesClientRoutes(app);
-  
+
   this.initSession(app, db);
-  
+
   this.initModulesConfiguration(app);
-  
+
   this.initModulesServerPolicies(app);
-  
+
   this.initModulesServerRoutes(app);
-  
+
   this.initErrorRoutes(app);
-  
+
   app = this.configureSocketIO(app, db);
-  
+
   return app;
-}
+};

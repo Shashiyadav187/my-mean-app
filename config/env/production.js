@@ -10,7 +10,7 @@ module.exports = {
     caBundle: './config/sslcerts/cabundle.crt'
   },
   port: process.env.PORT || 8443,
-  
+
   // Binding to 127.0.0.1 is safer n production
   host: process.env.HOST || '0.0.0.0',
   db: {
@@ -53,7 +53,7 @@ module.exports = {
     clientSecret: process.env.GOOGLE_SECRET || 'APP_SECRET',
     callbackURL: '/api/auth/google/callback'
   },
-  
+
   mailer: {
     from: process.env.MAILER_FROM || 'MAILER_FROM',
     options: {

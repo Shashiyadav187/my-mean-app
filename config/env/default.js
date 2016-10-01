@@ -11,7 +11,7 @@ module.exports = {
   host: process.env.HOST || '0.0.0.0',
   domain: process.env.DOMAIN,
   sessionCookie: {
-    //expiration set to 24 hr
+    // expiration set to 24 hr
     maxAge: 24 * (60 * 60 * 1000),
     // httpOnly flag makes sure the cookie is only accessed
     // through the HTTP protocol and not JS/browser
@@ -22,8 +22,8 @@ module.exports = {
     secure: false
   },
   sessionSecret: process.env.SESSION_SECRET || 'my-mean-app',
-  
-  //sessionKey is the cookie session name
+
+  // sessionKey is the cookie session name
   sessionKey: 'sessionId',
   sessionCollection: 'sessions',
   // Lusca config
@@ -40,7 +40,7 @@ module.exports = {
     profileUpload: {
       dest: './modules/users/client/img/profile/uploads/', // Profile upload destination path
       limits: {
-        fileSize: 1 * 1024 * 1024 //Max file size in bytes, default is 1 MB
+        fileSize: 1 * 1024 * 1024 // Max file size in bytes, default is 1 MB
       }
     }
   },
@@ -53,5 +53,4 @@ module.exports = {
       minOptionalTestsToPass: 4
     }
   }
-
 };
