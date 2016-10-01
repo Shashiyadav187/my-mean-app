@@ -19,7 +19,7 @@ var config = require('../config'),
   flash = require('connect-flash'),
   hbs = require('express-hbs'),
   path = require('path'),
-  _ = require('loadash'),
+  _ = require('lodash'),
   lusca = require('lusca');
   
   
