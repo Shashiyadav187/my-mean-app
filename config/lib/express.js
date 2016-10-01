@@ -122,7 +122,7 @@ module.exports.initSession = function (app, db) {
  * Invoke module server configuration
  */
 module.exports.initModulesConfiguration = function (app, db) {
-  config.files.server.config.forEach(function (configPath) {
+  config.files.server.configs.forEach(function (configPath) {
     // TODO check why app,db is passed as parameter?
     require(path.resolve(configPath))(app, db);
   });
@@ -208,7 +208,7 @@ module.exports.init = function (db) {
 
   this.initLocalVariables(app);
 
-  this.initViewEngine(app);
+  this.initMiddleware(app);
 
   this.initViewEngine(app);
 
