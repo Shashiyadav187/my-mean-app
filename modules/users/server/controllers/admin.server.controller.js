@@ -142,11 +142,11 @@ exports.createBulkUsers = function (req, res) {
         input: fs.createReadStream(csv.toString())
       });
 
-      usersLine.on('line', (line) => {
-      var userData = line.split(',');
+      usersLine.on('line', function(line) {
+        var userData = line.split(',');
         // usersList.push({username: line, email: line + '@localhost.com', roles: ['user']});
         var user = {
-          firstName: userData[0], 
+          firstName: userData[0],
           lastName: userData[1],
           displayName: userData[2],
           username: userData[3],
@@ -155,18 +155,18 @@ exports.createBulkUsers = function (req, res) {
           provider: userData[6],
           roles: userData[7]
         };
-        
+
         User.create(user, function (err) {
           if (err) {
             console.error('User create error', err);
-            reject(errorHandler.getErrorMessage(err))
+            reject(errorHandler.getErrorMessage(err));
           } else {
             console.log('User creation success');
             resolve();
-        }
+          }
         });
       });
-      
+
       // console.log('usersList', JSON.stringify(usersList, null, 4));
       // Do async here
 

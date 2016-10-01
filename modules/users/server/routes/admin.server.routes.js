@@ -13,10 +13,10 @@ module.exports = function (app) {
   // Users collection routes
   app.route('/api/users')
     .get(adminPolicy.isAllowed, admin.list);
-  
+
   // Create bulk users
   app.route('/api/users')
-    .post(adminPolicy.isAllowed, admin.createBulkUsers)
+    .post(adminPolicy.isAllowed, admin.createBulkUsers);
 
   // Single user routes
   app.route('/api/users/:userId')

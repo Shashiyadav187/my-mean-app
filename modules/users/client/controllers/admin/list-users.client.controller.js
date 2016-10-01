@@ -15,8 +15,7 @@
     vm.fileSelected = false;
     vm.csvFile = null;
     vm.createBulkUsers = createBulkUsers;
-    
-    
+
     AdminService.query(function (data) {
       vm.users = data;
       vm.buildPager();
@@ -33,7 +32,7 @@
       vm.csvFile.upload = Upload.upload({
         url: '/api/users',
         method: 'POST',
-        data: {file: vm.csvFile},
+        data: { file: vm.csvFile }
       })
       .then(function (response) {
         $timeout(function () {
@@ -44,7 +43,7 @@
           $scope.errorMsg = response.status + ': ' + response.data;
       }, function (evt) {
         // Math.min is to fix IE which reports 200% sometimes
-        vm.csvFile.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+        vm.csvFile.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total, 10));
       });
     }
 
