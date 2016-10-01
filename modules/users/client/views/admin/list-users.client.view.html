@@ -1,0 +1,33 @@
+<section>
+  <div class="page-header">
+    <div class="row">
+      <div class="col-md-4">
+        <h1>Users</h1>
+      </div>
+      <div class="col-md-4" style="margin-top: 2em">
+        <input class="form-control col-md-4" type="text" ng-model="vm.search" placeholder="Search" ng-change="vm.figureOutItemsToDisplay()" />
+      </div>
+      <div class="col-md-4" style="margin-top: 2em">
+        <button class="btn btn-default btn-file" ngf-select="vm.fileSelected = true; vm.success = null" ng-model="vm.csvFile" accept="text/csv, .csv" ng-show="!vm.fileSelected">Select CSV to Create Bulk Users</button>
+        <span ng-show="vm.fileSelected"> {{ vm.csvFile.name }}
+          <button class="btn btn-default" ng-show="vm.fileSelected" ng-click="vm.createBulkUsers()">Create Users</button>
+        </span>
+        <span class="progress" ng-show="vm.csvFile.progress >= 0">
+        <div style="width:{{vm.csvFile.progress}}%" 
+            ng-bind="vm.csvFile.progress + '%'"></div>
+      </span>
+      <span ng-show="vm.csvFile.result">Upload Successful</span>
+      <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="user in vm.pagedItems" ui-sref="admin.user({userId: user._id})" class="list-group-item">
+      <h4 class="list-group-item-heading" ng-bind="user.username"></h4>
+      <p class="list-group-item-text pull-right small" ng-bind="user.roles"></p>
+      <p class="list-group-item-text" ng-bind="user.email"></p>
+    </a>
+  </div>
+
+  <uib-pagination boundary-links="true" max-size="8" items-per-page="vm.itemsPerPage" total-items="vm.filterLength" ng-model="vm.currentPage" ng-change="vm.pageChanged()"></uib-pagination>
+</section>
