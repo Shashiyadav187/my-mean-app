@@ -82,7 +82,7 @@ var validateDomainIsSet = function (config) {
 
 var validateSecureMode = function (config) {
 
-  if (!config.secure || config.secret.ssl !== true) {
+  if (!config.secure || config.secure.ssl !== true) {
     return true;
   }
 
