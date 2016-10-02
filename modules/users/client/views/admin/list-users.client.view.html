@@ -7,17 +7,16 @@
       <div class="col-md-4" style="margin-top: 2em">
         <input class="form-control col-md-4" type="text" ng-model="vm.search" placeholder="Search" ng-change="vm.figureOutItemsToDisplay()" />
       </div>
-      <div class="col-md-4" style="margin-top: 2em">
-        <button class="btn btn-default btn-file" ngf-select="vm.fileSelected = true; vm.success = null" ng-model="vm.csvFile" accept="text/csv, .csv" ng-show="!vm.fileSelected">Select CSV to Create Bulk Users</button>
+    </div>
+    <div class="row">
+      <div class="col-md-12" style="margin-top: 2em">
+        <button class="btn btn-default btn-file" ngf-select="vm.fileSelected = true; vm.success = null; vm.bulkUserCreated = null" ng-model="vm.csvFile" accept="text/csv, .csv" ng-show="!vm.fileSelected">Select CSV to Create Bulk Users</button>
         <span ng-show="vm.fileSelected"> {{ vm.csvFile.name }}
           <button class="btn btn-default" ng-show="vm.fileSelected" ng-click="vm.createBulkUsers()">Create Users</button>
         </span>
-        <span class="progress" ng-show="vm.csvFile.progress >= 0">
-        <div style="width:{{vm.csvFile.progress}}%" 
-            ng-bind="vm.csvFile.progress + '%'"></div>
-      </span>
-      <span ng-show="vm.csvFile.result">Upload Successful</span>
-      <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
+        <span class="alert alert-info" role="alert" ng-show="vm.csvFile.uploadStatus">CSV file processing, please wait...</span>
+      <span class="alert alert-success" role="alert" ng-show="vm.bulkUserCreated">Bulk Users creation is successful.</span>
+      <span class="alert alert-danger" role="alert" ng-show="errorMsg">{{errorMsg}}</span>
       </div>
     </div>
   </div>

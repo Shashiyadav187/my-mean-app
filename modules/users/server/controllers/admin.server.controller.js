@@ -158,10 +158,9 @@ exports.createBulkUsers = function (req, res) {
 
         User.create(user, function (err) {
           if (err) {
-            console.error('User create error', err);
+            console.error('User creation error', err);
             reject(errorHandler.getErrorMessage(err));
           } else {
-            console.log('User creation success');
             resolve();
           }
         });

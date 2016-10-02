@@ -14,6 +14,7 @@
     vm.pageChanged = pageChanged;
     vm.fileSelected = false;
     vm.csvFile = null;
+    vm.bulkUserCreated = null;
     vm.createBulkUsers = createBulkUsers;
 
     AdminService.query(function (data) {
@@ -36,14 +37,15 @@
       })
       .then(function (response) {
         $timeout(function () {
-          vm.csvFile.result = response.data;
+          vm.bulkUserCreated = response.data;
+          vm.fileSelected = null;
+          vm.csvFile = null;
         });
       }, function (response) {
         if (response.status > 0)
           $scope.errorMsg = response.status + ': ' + response.data;
       }, function (evt) {
-        // Math.min is to fix IE which reports 200% sometimes
-        vm.csvFile.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total, 10));
+        vm.csvFile.uploadStatus = 'OK';
       });
     }
 
