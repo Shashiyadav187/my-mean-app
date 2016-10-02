@@ -65,7 +65,11 @@ exports.signin = function (req, res, next) {
         if (err) {
           res.status(400).send(err);
         } else {
-          res.json(user);
+          if (user.enabled) {
+            res.json(user);
+          } else {
+            res.status(400).send({ message: 'Account is disabled!' });
+          }
         }
       });
     }
