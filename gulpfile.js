@@ -276,6 +276,15 @@ gulp.task('makeUploadsDir', function () {
   });
 });
 
+// Make sure CSV upload directory exists
+gulp.task('makeUploadsDirForCSV', function () {
+  return fs.mkdir('modules/users/client/csv', function (err) {
+    if (err && err.code !== 'EEXIST') {
+      console.error(err);
+    }
+  });
+});
+
 // Angular template cache task
 gulp.task('templatecache', function () {
   return gulp.src(defaultAssets.client.views)
@@ -432,7 +441,7 @@ gulp.task('test', function (done) {
 });
 
 gulp.task('test:server', function (done) {
-  runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir', 'dropdb'], 'lint', 'mocha', done);
+  runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir', 'makeUploadsDirForCSV', 'dropdb'], 'lint', 'mocha', done);
 });
 
 // Watch all server files for changes & run server tests (test:server) task on changes
@@ -449,20 +458,20 @@ gulp.task('test:e2e', function (done) {
 });
 
 gulp.task('test:coverage', function (done) {
-  runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir', 'dropdb'], 'lint', 'mocha:coverage', 'karma:coverage', done);
+  runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir', 'makeUploadsDirForCSV', 'dropdb'], 'lint', 'mocha:coverage', 'karma:coverage', done);
 });
 
 // Run the project in development mode
 gulp.task('default', function (done) {
-  runSequence('env:dev', ['copyLocalEnvConfig', 'makeUploadsDir'], 'lint', ['nodemon', 'watch'], done);
+  runSequence('env:dev', ['copyLocalEnvConfig', 'makeUploadsDir', 'makeUploadsDirForCSV'], 'lint', ['nodemon', 'watch'], done);
 });
 
 // Run the project in debug mode
 gulp.task('debug', function (done) {
-  runSequence('env:dev', ['copyLocalEnvConfig', 'makeUploadsDir'], 'lint', ['node-inspector', 'nodemon-debug', 'watch'], done);
+  runSequence('env:dev', ['copyLocalEnvConfig', 'makeUploadsDir', 'makeUploadsDirForCSV'], 'lint', ['node-inspector', 'nodemon-debug', 'watch'], done);
 });
 
 // Run the project in production mode
 gulp.task('prod', function (done) {
-  runSequence(['copyLocalEnvConfig', 'makeUploadsDir', 'templatecache'], 'build', 'env:prod', 'lint', ['nodemon', 'watch'], done);
+  runSequence(['copyLocalEnvConfig', 'makeUploadsDir', 'makeUploadsDirForCSV', 'templatecache'], 'build', 'env:prod', 'lint', ['nodemon', 'watch'], done);
 });

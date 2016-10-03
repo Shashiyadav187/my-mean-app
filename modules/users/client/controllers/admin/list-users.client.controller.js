@@ -42,8 +42,11 @@
           vm.csvFile = null;
         });
       }, function (response) {
-        if (response.status > 0)
+        if (response.status > 0) {
           $scope.errorMsg = response.status + ': ' + response.data;
+          vm.fileSelected = null;
+          vm.csvFile = null;
+        }
       }, function (evt) {
         vm.csvFile.uploadStatus = 'OK';
       });

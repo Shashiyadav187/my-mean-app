@@ -102,7 +102,7 @@ exports.userByID = function (req, res, next, id) {
  */
 exports.createBulkUsers = function (req, res) {
   var user = req.user;
-  var upload = multer(config.uploads.profileUpload).single('file');
+  var upload = multer(config.uploads.csvUpload).single('file');
   var bulkUserUploadFileFilter = require(path.resolve('./config/lib/multer')).bulkUserUploadFileFilter;
 
   // Filtering to upload only images
@@ -110,7 +110,8 @@ exports.createBulkUsers = function (req, res) {
 
   if (user) {
     uploadCSV()
-      .then(createUsers)
+      .then(readCSVFile)
+      .then(insertUsers)
       .then(function () {
         res.json(user);
       })
@@ -135,17 +136,16 @@ exports.createBulkUsers = function (req, res) {
     });
   }
 
-  function createUsers () {
+  function readCSVFile () {
     return new Promise(function (resolve, reject) {
-      var csv = config.uploads.profileUpload.dest + req.file.filename;
-      // var usersList = [];
+      var csv = config.uploads.csvUpload.dest + req.file.filename;
+      var usersList = [];
       var usersLine = readline.createInterface({
         input: fs.createReadStream(csv.toString())
       });
 
       usersLine.on('line', function(line) {
         var userData = line.split(',');
-        // usersList.push({username: line, email: line + '@localhost.com', roles: ['user']});
         var user = {
           firstName: userData[0],
           lastName: userData[1],
@@ -156,30 +156,29 @@ exports.createBulkUsers = function (req, res) {
           provider: userData[6],
           roles: userData[7]
         };
-
-        User.create(user, function (err) {
-          if (err) {
-            console.error('User creation error', err);
-            reject(errorHandler.getErrorMessage(err));
-          } else {
-            resolve();
-          }
-        });
+        usersList.push(user);
       });
 
-      // console.log('usersList', JSON.stringify(usersList, null, 4));
-      // Do async here
-
-      // User.create(usersList, function (err) {
-      //   if (err) {
-      //     console.error('Bulk user create error', err);
-      //     reject(errorHandler.getErrorMessage(err))
-      //   } else {
-      //     console.log('Bulk  user creation success');
-      //     resolve();
-      //   }
-      // });
+      usersLine.on('close', function() {
+        if (usersList) {
+          resolve(usersList);
+        } else {
+          reject(new Error('Some error occurred while reading csv file, make sure file is not empty'));
+        }
+      });
     });
   }
 
+  function insertUsers(usersList) {
+    return new Promise(function (resolve, reject) {
+      User.insertMany(usersList, function (err) {
+        if (err) {
+          reject(errorHandler.getErrorMessage(err));
+        } else {
+          resolve();
+        }
+      });
+    });
+
+  }
 };

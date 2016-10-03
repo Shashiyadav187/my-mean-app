@@ -10,12 +10,12 @@
     </div>
     <div class="row">
       <div class="col-md-12" style="margin-top: 2em">
-        <button class="btn btn-default btn-file" ngf-select="vm.fileSelected = true; vm.success = null; vm.bulkUserCreated = null" ng-model="vm.csvFile" accept="text/csv, .csv" ng-show="!vm.fileSelected">Select CSV to Create Bulk Users</button>
+        <button class="btn btn-default btn-file" ngf-select="vm.fileSelected = true; vm.success = null; errorMsg=null; vm.bulkUserCreated = null" ng-model="vm.csvFile" accept="text/csv, .csv" ng-show="!vm.fileSelected">Select CSV to Create Bulk Users</button>
         <span ng-show="vm.fileSelected"> {{ vm.csvFile.name }}
           <button class="btn btn-default" ng-show="vm.fileSelected" ng-click="vm.createBulkUsers()">Create Users</button>
         </span>
         <span class="alert alert-info" role="alert" ng-show="vm.csvFile.uploadStatus">CSV file processing, please wait...</span>
-      <span class="alert alert-success" role="alert" ng-show="vm.bulkUserCreated">Bulk Users creation is successful.</span>
+      <span class="alert alert-success" role="alert" ng-show="vm.bulkUserCreated">Bulk Users creation is successful. Please refresh page.</span>
       <span class="alert alert-danger" role="alert" ng-show="errorMsg">{{errorMsg}}</span>
       </div>
     </div>
